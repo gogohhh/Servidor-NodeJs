@@ -6,6 +6,8 @@ const Galeria = require('../modelos/galeria-modelo');
 
 const fs = require('fs');
 
+const path = require('path');
+
 //PETICIÓN GET ****************************************************************
 
 let mostrarGaleria = (req,resp)=>{  //SE EJECUTA EN LA RUTA RAIZ
@@ -330,10 +332,28 @@ let borrarGaleria = (req, res) => {
     })
 }
 
+//FUNCIÓN PARA MOSTRAR LA GALERIA MEDIANTE EL SERVIDOR
+let mostrarImg = (req, res)=>{
+    let imagen = req.params.imagen;
+    let rutaImagen = `./archivos/galeria/${imagen}`;
+
+    fs.exists(rutaImagen, exists=>{
+        if(!exists){
+            return res.json({
+                status: 400,
+                mensaje: "La imagen no existe"
+            })
+        }
+
+        res.sendFile(path.resolve(rutaImagen));
+    })
+}
+
 //EXPORTAR LAS FUNCIONES DEL CONTROLADOR
 module.exports = {
     mostrarGaleria,
     crearGaleria,
     editarGaleria,
-    borrarGaleria
+    borrarGaleria,
+    mostrarImg
 }

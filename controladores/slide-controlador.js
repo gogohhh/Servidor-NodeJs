@@ -6,6 +6,7 @@ const Slide = require('../modelos/slide-modelo');
 
 const fs = require('fs');
 
+const path = require('path');
 //PETICIÓN GET ****************************************************************
 
 let mostrarSlide = (req,resp)=>{  //SE EJECUTA EN LA RUTA RAIZ
@@ -99,7 +100,7 @@ let crearSlide = (req, resp)=>{
         slide.save((err,data)=>{
             if(err){
                 return resp.json({
-                    status:200,
+                    status:400,
                     mensaje: "Error al almacenar el slide",
                     err
                 })
@@ -335,10 +336,31 @@ let borrarSlide = (req, res) => {
     })
 }
 
+//FUNCION GET PARA ACCESO A LAS IMAGENES
+let mostrarImg = (req, res)=>{
+
+    let imagen = req.params.imagen;
+    let rutaImagen = `./archivos/slide/${imagen}`;
+    
+    fs.exists(rutaImagen, exists=>{
+        if(!exists){
+            return res.json({
+                status:400,
+                mensaje: "La imagen no existe"
+            })
+        }
+
+        res.sendFile(path.resolve(rutaImagen));
+
+
+    })
+}
+
 //EXPORTAR LAS FUNCIONES DEL CONTROLADOR
 module.exports = {
     mostrarSlide,
     crearSlide,
     editarSlide,
-    borrarSlide
+    borrarSlide,
+    mostrarImg
 }
